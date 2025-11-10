@@ -1,13 +1,30 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import Layout from '@/components/Layout';
+import HomePage from '@/components/HomePage';
+import CalculatorPage from '@/components/CalculatorPage';
+import AiSolverPage from '@/components/AiSolverPage';
+import ProfilePage from '@/components/ProfilePage';
 
 const Index = () => {
+  const [currentPage, setCurrentPage] = useState('home');
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'calculator':
+        return <CalculatorPage />;
+      case 'ai':
+        return <AiSolverPage />;
+      case 'profile':
+        return <ProfilePage />;
+      default:
+        return <HomePage onNavigate={setCurrentPage} />;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4 color-black text-black">Добро пожаловать!</h1>
-        <p className="text-xl text-gray-600">тут будет отображаться ваш проект</p>
-      </div>
-    </div>
+    <Layout currentPage={currentPage} onNavigate={setCurrentPage}>
+      {renderPage()}
+    </Layout>
   );
 };
 
