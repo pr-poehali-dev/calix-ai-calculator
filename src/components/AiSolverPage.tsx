@@ -72,15 +72,42 @@ export default function AiSolverPage({
       onEnergyChange(energy - 10);
     }
 
-    setTimeout(() => {
+    try {
+      const response = await fetch('https://functions.poehali.dev/91f717e7-36c7-4658-90ab-193a67a57805', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ question: input }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Ошибка при обращении к ИИ');
+      }
+
       const aiResponse: Message = {
         role: 'ai',
-        content: `Я получил твой вопрос: "${input}". Это демонстрационная версия ИИ-решателя. В полной версии здесь будет детальное решение с пошаговым объяснением.`,
+        content: data.answer,
         timestamp: new Date(),
       };
+      
       setMessages((prev) => [...prev, aiResponse]);
+    } catch (error) {
+      const errorMessage: Message = {
+        role: 'ai',
+        content: `Извините, произошла ошибка: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+      
+      if (!hasPremix) {
+        onEnergyChange(energy + 10);
+      }
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const energyPercentage = hasPremix ? 100 : (energy / 1000) * 100;

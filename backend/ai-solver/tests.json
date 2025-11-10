@@ -1,0 +1,28 @@
+{
+  "tests": [
+    {
+      "name": "Test AI solver with math question",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "question": "Реши уравнение: 2x + 5 = 13"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "answer": "string",
+        "request_id": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test missing question",
+      "method": "POST",
+      "path": "/",
+      "body": {},
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Question is required"
+      }
+    }
+  ]
+}

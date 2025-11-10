@@ -11,35 +11,45 @@ interface LayoutProps {
   children: React.ReactNode;
   currentPage: string;
   onNavigate: (page: string) => void;
+  isLoggedIn: boolean;
+  user: { name: string; email: string; hasPremix: boolean } | null;
+  energy: number;
+  onLogin: (email: string, password: string) => void;
+  onRegister: (name: string, email: string, password: string) => void;
+  onActivatePremix: () => void;
+  onLogout: () => void;
 }
 
-export default function Layout({ children, currentPage, onNavigate }: LayoutProps) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<{ name: string; email: string; hasPremix: boolean } | null>(null);
-  const [energy, setEnergy] = useState(1000);
+export default function Layout({ 
+  children, 
+  currentPage, 
+  onNavigate,
+  isLoggedIn,
+  user,
+  energy,
+  onLogin,
+  onRegister,
+  onActivatePremix,
+  onLogout
+}: LayoutProps) {
   const { toast } = useToast();
 
   const handleLogin = (email: string, password: string) => {
-    setUser({ name: 'User', email, hasPremix: false });
-    setIsLoggedIn(true);
+    onLogin(email, password);
     toast({ title: 'Вход выполнен!', description: 'Добро пожаловать в CaliX' });
   };
 
   const handleRegister = (name: string, email: string, password: string) => {
-    setUser({ name, email, hasPremix: false });
-    setIsLoggedIn(true);
-    setEnergy(1000);
+    onRegister(name, email, password);
     toast({ title: 'Регистрация успешна!', description: 'Ваш аккаунт создан' });
   };
 
   const handleActivatePremix = () => {
-    if (user) {
-      setUser({ ...user, hasPremix: true });
-      toast({
-        title: '🎉 PremiX активирован!',
-        description: 'Теперь у вас безлимитная энергия!',
-      });
-    }
+    onActivatePremix();
+    toast({
+      title: '🎉 PremiX активирован!',
+      description: 'Теперь у вас безлимитная энергия!',
+    });
   };
 
   const navItems = [
@@ -201,9 +211,7 @@ export default function Layout({ children, currentPage, onNavigate }: LayoutProp
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setIsLoggedIn(false);
-                    setUser(null);
-                    setEnergy(1000);
+                    onLogout();
                     toast({ title: 'Выход выполнен' });
                   }}
                   className="border-purple-500/50 hover:bg-purple-500/10"
